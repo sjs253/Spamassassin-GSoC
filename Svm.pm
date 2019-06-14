@@ -67,6 +67,21 @@ sub check_svm {
 
 sub scan{
     my ($self, $permsgstatus, $msg) = @_;
+   
+    #command to run the python script, msg will be passed as an
+    #argument and the message status will be retuened as the output 
+}
+
+sub learn_svm{
+
+    #Mbox file will be passed as an argument, formail will filter the headers
+    #and the model will be trained.Values of the best_params will be returned
+    #and a SVM classifier will be created which will handle the incoming 
+    #mail.
 }
 
 1;
+
+
+
+
