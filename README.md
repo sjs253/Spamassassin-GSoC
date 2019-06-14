@@ -13,3 +13,4 @@ F1 score of 98% is achieved as of now. See the confusion matrix for further deta
 #### Open Svm.pm to see the Perl code of the plugin.This is under development right now.</br>
 1. A constructor (Calls register_eval_rule() of Plugin.pm which calls register_eval_rule() of Conf.pm to register the rule)</br>
 2. A check_svm() sub which calls scan() and finally returns the status of the mail.</br>
+3. A svm_learn() sub which trains the model using user's mbox file as the dataset.</br>
