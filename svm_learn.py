@@ -1,19 +1,19 @@
 import numpy as np
-import string, warnings, os, glob, email, re, pickle, nltk
+import io, string, warnings, os, glob, email, re, pickle, sys
 from collections import Counter
 from sklearn import feature_extraction, model_selection, naive_bayes, metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import cross_val_score, GridSearchCV, train_test_split
-from nltk.tokenize import word_tokenize
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, CuDNNGRU, Conv1D
-from keras.layers import Bidirectional, GlobalMaxPool1D
-from keras.models import Model
-from keras import initializers, regularizers, constraints, optimizers, layers
+# from nltk.tokenize import word_tokenize
+# from keras.preprocessing.text import Tokenizer
+# from keras.preprocessing.sequence import pad_sequences
+# from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, CuDNNGRU, Conv1D
+# from keras.layers import Bidirectional, GlobalMaxPool1D
+# from keras.models import Model
+# from keras import initializers, regularizers, constraints, optimizers, layers
 
 def get_email_content(email_path):
-    file = open(email_path,encoding='latin1')
+    file = io.open(email_path, encoding='latin1')
     try:
         msg = email.message_from_file(file)
         for part in msg.walk():
@@ -68,7 +68,7 @@ def svm_model_learn(x_train,y_train):
 
     svc = svm.SVC(kernel='rbf')
     svm_clf = GridSearchCV(svc, parameters, cv=2, scoring='f1', n_jobs=-1)
-    svm_clf.fit(x_train,y_train)
+    svm_clf.fit(x_train_feature,y_train)
 
     pickle.dump(svm_clf, open('svm_pickle', 'wb'), protocol=2)
     pickle.dump(tfidf, open('tfidf_pickle', 'wb'), protocol=2)
@@ -79,24 +79,25 @@ def neural_model_learn():
 
 if __name__ == "__main__":
 
-    # Get the mbox location and pass it to glob, use sys.argv
+    ham = sys.argv[1]
+    spam = sys.argv[2]
 
-	ham_path = glob.glob(sys.argv[1])
-	spam_paths = glob.glob(sys.argv[2])
+    ham_path = glob.glob(ham + '/*')
+    spam_path = glob.glob(spam + '/*')
 
-	ham_sample = np.array([train_test_split(o) for o in ham_path])
-	ham_train = np.array([])
-	ham_test = np.array([])
-	for o in ham_sample:
-    ham_train = np.concatenate((ham_train,o[0]),axis=0)
-    ham_test = np.concatenate((ham_test,o[1]),axis=0)
+    ham_sample = np.array([train_test_split(o) for o in ham_path])
+    ham_train = np.array([])
+    ham_test = np.array([])
+    for o in ham_sample:
+        ham_train = np.concatenate((ham_train,o[0]),axis=0)
+        ham_test = np.concatenate((ham_test,o[1]),axis=0)
 
     spam_sample = np.array([train_test_split(o) for o in spam_path])
-	spam_train = np.array([])
-	spam_test = np.array([])
-	for o in spam_sample:
-    spam_train = np.concatenate((spam_train,o[0]),axis=0)
-    spam_test = np.concatenate((spam_test,o[1]),axis=0)
+    spam_train = np.array([])
+    spam_test = np.array([])
+    for o in spam_sample:
+        spam_train = np.concatenate((spam_train,o[0]),axis=0)
+        spam_test = np.concatenate((spam_test,o[1]),axis=0)
 
     ham_train_label = [0]*ham_train.shape[0]
     spam_train_label = [1]*spam_train.shape[0]
@@ -115,15 +116,14 @@ if __name__ == "__main__":
     y_train = y_train[train_shuffle_index]
 
     x_test = x_test[test_shuffle_index]
-	y_test = y_test[test_shuffle_index]
+    y_test = y_test[test_shuffle_index]
 
-	x_train = get_email_content_bulk(x_train)
-	x_test = get_email_content_bulk(x_test)
+    x_train = get_email_content_bulk(x_train)
+    x_test = get_email_content_bulk(x_test)
 
-	x_train = [clean_up_pipeline(o) for o in x_traisvc = svm.SVC(kernel='rbf')
-	x_test = [clean_up_pipeline(o) for o in x_test]svc = svm.SVC(kernel='rbf')
+    x_train = [clean_up_pipeline(o) for o in x_train]
+    x_test = [clean_up_pipeline(o) for o in x_test]
 
-
-    # Call svm_model_learn() and pass x_train and y_train as parameters
+    svm_model_learn(x_train,y_train)
 
     # Figure out how will you call the neural network
