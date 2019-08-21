@@ -12,6 +12,10 @@ from sklearn.model_selection import cross_val_score, GridSearchCV, train_test_sp
 # from keras.models import Model
 # from keras import initializers, regularizers, constraints, optimizers, layers
 
+def remove_null(datas,labels):
+    not_null_idx = [i for i,o in enumerate(datas) if o is not None]
+    return np.array(datas)[not_null_idx],np.array(labels)[not_null_idx]
+
 def get_email_content(email_path):
     file = io.open(email_path, encoding='latin1')
     try:
@@ -49,7 +53,7 @@ def replace_newline(word):
     return word.replace('\n','')
 
 def clean_up_pipeline(sentence):
-    cleaning_utils = [remove_hyperlink,
+    cleaning_utils = [
                       replace_newline,
                       to_lower,
                       remove_number,
@@ -60,7 +64,7 @@ def clean_up_pipeline(sentence):
 
 def svm_model_learn(x_train,y_train):
     tfidf = TfidfVectorizer(stop_words = 'english')
-    x_train_feature = tfidf.fit_transform()         # Pass x_train here somehow to extract the features
+    x_train_feature = tfidf.fit_transform(x_train)       
     
     list_C = np.arange(800,900,100)
     list_gamma = np.arange(0.001,0.006,0.001)
@@ -79,12 +83,18 @@ def neural_model_learn():
 
 if __name__ == "__main__":
 
-    ham = sys.argv[1]
-    spam = sys.argv[2]
+    ham1 = 'dataset/ham1/*'
+    ham2 = 'dataset/ham2/*'
+    spam1 = 'dataset/spam1/*'
+    spam2 = 'dataset/spam2/*'
 
-    ham_path = glob.glob(ham + '/*')
-    spam_path = glob.glob(spam + '/*')
+    ham1_path = glob.glob(ham1)
+    ham2_path = glob.glob(ham2)
+    spam1_path = glob.glob(spam1)
+    spam2_path = glob.glob(spam2)
 
+    ham_path = [ ham1_path, ham2_path]
+    spam_path = [ spam1_path, spam2_path]
     ham_sample = np.array([train_test_split(o) for o in ham_path])
     ham_train = np.array([])
     ham_test = np.array([])
@@ -121,8 +131,11 @@ if __name__ == "__main__":
     x_train = get_email_content_bulk(x_train)
     x_test = get_email_content_bulk(x_test)
 
-    x_train = [clean_up_pipeline(o) for o in x_train]
-    x_test = [clean_up_pipeline(o) for o in x_test]
+    x_train,y_train = remove_null(x_train,y_train)
+    x_test,y_test = remove_null(x_test,y_test)
+
+    # x_train = [clean_up_pipeline(o) for o in x_train]
+    # x_test = [clean_up_pipeline(o) for o in x_test]
 
     svm_model_learn(x_train,y_train)
 
