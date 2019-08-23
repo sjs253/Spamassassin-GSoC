@@ -1,6 +1,7 @@
 # Spamassassin-GSoC
 I am currently a GSoC student under ASF working on the project Spamassassin. Apache Singa will be used in this project for the development of neural nets for spam detection. </br> 
-This readme will be constantly updated over the course of programme.</br>
+
+![alt text](https://github.com/sjs253/Spamassassin-GSoC/blob/master/spam.png)
 ### Current status</br>
 #### SVM.ipynb</br>
 1. Removal of punctuation did'nt help in increasing the F1 score.Although a python script is ready and can be used if needed.</br>
