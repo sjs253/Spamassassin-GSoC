@@ -1,0 +1,8 @@
+ifplugin Mail::SpamAssassin::Plugin::Svm
+
+add_header all Svm_Plugin_Tag _SVMTAG_
+
+header   SVM_plugin_check eval:check_svm()
+score    SVM_plugi_ncheck 1
+describe SVM_plugin_check Returns the spammines of the mail using SVM classifier
+endif
