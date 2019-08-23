@@ -2,25 +2,43 @@
 I am currently a GSoC student under ASF working on the project Spamassassin. Apache Singa will be used in this project for the development of neural nets for spam detection. </br> 
 
 ![alt text](https://github.com/sjs253/Spamassassin-GSoC/blob/master/spam.png)
-### Current status</br>
-#### SVM.ipynb</br>
-1. Removal of punctuation did'nt help in increasing the F1 score.Although a python script is ready and can be used if needed.</br>
-2. As stop words are language specific, thry are not removed either.</br>
-3. Stemming is used for Data cleaning</br>
-4. TFIDF is used for feature extraction. Message length was also considered as a feature but proved to be disastrous.</br>
-5. K-fold Cross validation along with Random search is used for parameter tuning.</br>
-6. F1 score and confusion matrix is used as performance metric.</br></br>
-F1 score of 98% is achieved as of now. See the confusion matrix for further details.</br>
-#### Open Svm.pm to see the Perl code of the plugin.This is under development right now.</br>
-1. A constructor (Calls register_eval_rule() of Plugin.pm which calls register_eval_rule() of Conf.pm to register the rule)</br>
-2. A check_svm() sub which calls scan() and finally returns the status of the mail.</br>
-3. A svm_learn() sub which trains the model using user's mbox file as the dataset.</br>
+### Repo description</br>
+#### Dataset</br>
+This directory contains separate folders for sample spam/ham mbox mails which the user can use to train the Svm and Neural network model.</br>
+#### Jupyter_Notebooks</br>
+It contains the jupter notebooks for Svm and Keras model. For better visualisation and parameter tweaking users are sdvised to run jupyter notebooks.</br>
+#### Pickled_models</br>
+Sample pickled models which can directly be used for classification.</br>
+#### Spamassassin_files</br>
+This is the heart of the project. It contains a number of files,
+1. svm.cf - This is the configuration file needed for the plugin. Add this to /etc/mail/spamassassin directory.</br>
 
-#### Keras neural net.ipynb</br> 
-1. A Keras neural network for spam detection is developed.</br>
-2. GLOVE pre-train is used for word embeddings.</br>
-3. Bidirectional GRU is added.</br></br>
-F1 score of 95.2% is achieved. Refer the confusion matrix for further details.</br>
+2. svm.pre - This file is added before .cf files. Used to lead the plugin. Place it in /etc/mail/spamassassin/directory</br>
+3. svm.pm - This file has the Perl plugin code. Add in /usr/local/share/perl5 directory.</br>
+4. svm_learn.py - The python script which taked the path of dataset as argument and dumps the pickled models which will be used by the plugin for classification.</br>
+5. svm_python_call.py - This script is called by the .pm file. It takes the mail as an argument and returns the spamminess of the mail.</br>
+### Project status</br>
+#### Original Goals</br>
+1. Development of an effective SA plugin with various statistical classifiers for spam classification.</br>
 
-#### SINGA neural net.ipynb
-1. A neural network using Apache's machine learning library SINGA is developed.
+2. Integration of the plugins in SA.</br>
+3. Proper documentation and relevant tests for the plugin.</br>
+
+#### Achieved Goals</br>
+1. A basic Plugin with two classifiers ( SVM and neural net ) is developed.</br>
+
+2. Plugin was successfully integrated locally with SA.</br>
+3. Documentation of the code is done.</br>
+
+#### Future goals</br>
+1. Extend the scope of classifiers to other sections of MIME format mail namely, attachments  and relevant headers.</br>
+
+2. Adding dynamic functionality of making the plugin learn the correct classification of incorrectly classified mails.</br>
+3. Extend the functionality which will make the plugin classify the incoming mail in shades of spamminess.</br>
+4. Code an effective test file which covers the “perl calling python” aspect of the plugin. </br>
+5. Decide on the best score range which the plugin should provide once the rule gets hit.</br>
+6. Add a functionality which lets the user test the plugin on a given dataset for the model’s effectiveness.</br>
+7. Make the neural net compatible with CPU only machines.</br>
+8. Hopefully merge the code in the next major release of SA.</br>
+
+
